@@ -38,8 +38,14 @@ static_resources:
                     route:
                       cluster: redis-commander
                       # prefix_rewrite: "/"
-
-
+                  - match: { prefix: "/auth/" }
+                    route:
+                      cluster: keycloak
+                      # prefix_rewrite: "/"
+                  - match: { prefix: "/auth" }
+                    route:
+                      cluster: keycloak
+                      # prefix_rewrite: "/"
 
               http_filters:
                 - name: envoy.filters.http.router
@@ -86,3 +92,16 @@ static_resources:
                     socket_address:
                       address: redis-commander
                       port_value: 8001
+    - name: keycloak
+      connect_timeout: 30s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: keycloak
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: keycloak
+                      port_value: 8080

@@ -1,10 +1,19 @@
-# version: '3.7'
+version: '3.7'
 
-# services:
+services:
+  keycloak:
+    image: "jboss/keycloak:${KEYCLAOK_VERSION}"
+    container_name: keycloak
+    hostname: keycloak
+    restart: always
+    environment:
+      DB_VENDOR: ${KEYCLAOK_DB_VENDOR}
+      DB_USER: ${KEYCLAOK_DB_USER}
+      DB_PASSWORD: ${KEYCLAOK_DB_PASSWORD}
+      KEYCLOAK_USER: ${KEYCLOAK_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
 
-
-
-# networks:
-#   default:
-#     external:
-#       name: go-project-manager
+networks:
+  default:
+    external:
+      name: go-project-manager
