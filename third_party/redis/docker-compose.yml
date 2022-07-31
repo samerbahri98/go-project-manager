@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  redis:
+    image: "redis:${REDIS_VERSION}"
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+  redis-commander:
+    image: "ghcr.io/joeferner/redis-commander:latest"
+    container_name: redis-commander
+    hostname: redis-commander
+    environment:
+      PORT: 8001
+      URL_PREFIX: /redis-commander/
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      
+
+volumes:
+  redisinsight: {}
+  redis: {}
+
+
+networks:
+  default:
+    external:
+      name: go-project-manager

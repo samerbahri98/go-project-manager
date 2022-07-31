@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  envoyproxy:
+    image: "envoyproxy/envoy:${ENVOY_VERSION}"
+    restart: always
+    container_name: envoyproxy
+    volumes:
+      - ./envoy.yml:/etc/envoy/envoy.yaml
+    ports:
+      - 80:80
+      - 9901:9901
+    depends_on:
+      - adminer
+
+
+networks:
+  default:
+    external:
+      name: go-project-manager

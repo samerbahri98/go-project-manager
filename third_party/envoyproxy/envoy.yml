@@ -1,0 +1,88 @@
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901
+static_resources:
+  listeners:
+    - name: main_listener
+      address:
+        socket_address: { address: 0.0.0.0, port_value: 80 }
+      filter_chains:
+        - filters:
+          - name: envoy.filters.network.http_connection_manager
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+              stat_prefix: ingress
+              codec_type: auto
+              route_config:
+                name: local_route
+                virtual_hosts:
+                - name: local_services
+                  domains: ["*"]
+                  routes:
+                  - match: { prefix: "/minio" }
+                    route:
+                      cluster: minio
+                  - match: { prefix: "/adminer" }
+                    route:
+                      cluster: adminer
+                  - match: { prefix: "/adminer/" }
+                    route:
+                      cluster: adminer
+                  - match: { prefix: "/redis-commander" }
+                    route:
+                      cluster: redis-commander
+                      # prefix_rewrite: "/"
+                  - match: { prefix: "/redis-commander/" }
+                    route:
+                      cluster: redis-commander
+                      # prefix_rewrite: "/"
+
+
+
+              http_filters:
+                - name: envoy.filters.http.router
+                  typed_config:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
+  clusters:
+    - name: adminer
+      connect_timeout: 0.25s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: adminer
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: adminer
+                      port_value: 8080
+    - name: minio
+      connect_timeout: 0.25s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: minio
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: minio
+                      port_value: 9000
+    - name: redis-commander
+      connect_timeout: 30s
+      type: strict_dns
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: redis-commander
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: redis-commander
+                      port_value: 8001

@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+  db:
+    image: "percona:${PERCONA_VERSION}"
+    container_name: db
+    ports:
+      - 3306:3306
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - percona:/var/lib/mysql
+  adminer:
+    image: "adminer:${ADMINER_VERSION}"
+    container_name: adminer
+    hostname: adminer
+    restart: always
+    depends_on:
+      - db
+
+volumes:
+  percona: {}
+
+
+networks:
+  default:
+    external:
+      name: go-project-manager
