@@ -8,12 +8,15 @@ services:
     depends_on:
       - openldap
     restart: always
+    volumes:
+      - ./realm.json:${KEYCLAOK_REALM_PATH}
     environment:
       DB_VENDOR: ${KEYCLAOK_DB_VENDOR}
       DB_USER: ${KEYCLAOK_DB_USER}
       DB_PASSWORD: ${KEYCLAOK_DB_PASSWORD}
       KEYCLOAK_USER: ${KEYCLOAK_USER}
       KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
+      KEYCLOAK_IMPORT: ${KEYCLAOK_REALM_PATH}
 
 networks:
   default:
