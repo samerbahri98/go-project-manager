@@ -5,6 +5,8 @@ services:
     image: "jboss/keycloak:${KEYCLAOK_VERSION}"
     container_name: keycloak
     hostname: keycloak
+    depends_on:
+      - openldap
     restart: always
     environment:
       DB_VENDOR: ${KEYCLAOK_DB_VENDOR}

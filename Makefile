@@ -33,12 +33,20 @@ redis-up:
 redis-down:
 	/usr/libexec/docker/cli-plugins/docker-compose --env-file ./.env --project-directory ./third_party/redis down --volumes
 
+.PHONY: ldap-up
+ldap-up:
+	/usr/libexec/docker/cli-plugins/docker-compose --env-file ./.env --project-directory ./third_party/ldap up -d
+
+.PHONY: ldap-down
+ldap-down:
+	/usr/libexec/docker/cli-plugins/docker-compose --env-file ./.env --project-directory ./third_party/ldap down --volumes
+
 .PHONY: keycloak-up
-redis-up:
+keycloak-up:
 	/usr/libexec/docker/cli-plugins/docker-compose --env-file ./.env --project-directory ./third_party/keycloak up -d
 
 .PHONY: keycloak-down
-redis-down:
+keycloak-down:
 	/usr/libexec/docker/cli-plugins/docker-compose --env-file ./.env --project-directory ./third_party/keycloak down --volumes
 
 .PHONY: envoyproxy-up
@@ -51,8 +59,20 @@ envoyproxy-down:
 
 .PHONY: up
 up:
-	make network-up && make minio-up && make mysql-up && make redis-up && make keycloak-up && make envoyproxy-up
+	make network-up && \
+	make minio-up && \
+	make mysql-up && \
+	make redis-up && \
+	make ldap-up && \
+	make keycloak-up && \
+	make envoyproxy-up
 
 .PHONY: down
 down:
-	make minio-down && make mysql-down && make redis-down && make keycloak-down && make envoyproxy-down && make network-down
+	make minio-down && \
+	make mysql-down && \
+	make redis-down && \
+	make keycloak-down && \
+	make ldap-down && \
+	make envoyproxy-down && \
+	make network-down
